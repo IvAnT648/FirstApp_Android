@@ -5,21 +5,50 @@
     <string name="password_text">Пароль</string>
     <string name="login_text">Логин</string>
     <string name="welcome_text">Hello, </string>
-    <string name="title_activity_country">CountryActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
     <string name="country_name_string">Россия</string>
     <string name="country_square_string">17 125 191 км²</string>
     <string name="about_title_string">Об авторе</string>
-    <string name="version">Версия 3.0.0</string>
+    <string name="version">Версия 4.0</string>
     <string name="author_name">Антюхин И.Г.</string>
     <string name="country_info_menu_item_string">Информация о стране</string>
     <string name="saved_countries_menu_item_string">Сохранённые страны</string>
     <string name="choose_country_menu_item_string">Выбрать страну</string>
     <string name="about_menu_item_string">Об авторе</string>
+
+    <string-array name="countries_list">
+        <item>Австралия</item>
+        <item>Англия</item>
+        <item>Белорусия</item>
+        <item>Бразилия</item>
+        <item>Германия</item>
+        <item>Греция</item>
+        <item>Грузия</item>
+        <item>Дания</item>
+        <item>Египет</item>
+        <item>Израиль</item>
+        <item>Индия</item>
+        <item>Ирак</item>
+        <item>Иран</item>
+        <item>Испания</item>
+        <item>Италия</item>
+        <item>Латвия</item>
+        <item>Литва</item>
+        <item>Мексика</item>
+        <item>Монголия</item>
+        <item>Россия</item>
+        <item>Румыния</item>
+        <item>Сальвадор</item>
+        <item>Самоа</item>
+        <item>Сенегал</item>
+        <item>Канада</item>
+    </string-array>
+
+    <string-array name="saved_countries_list">
+        <item>США</item>
+        <item>Израиль</item>
+        <item>Белорусия</item>
+        <item>Италия</item>
+        <item>Россия</item>
+    </string-array>
 </resources>

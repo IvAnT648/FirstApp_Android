@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
 {
     private DrawerLayout mDrawerLayout;
@@ -20,9 +23,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        replaceTransaction(new ChooseCountryFragment());
-        login = findViewById(R.id.login);
 
+        if (savedInstanceState == null) {
+            replaceTransaction(new ChooseCountryFragment());
+        }
+
+        login = findViewById(R.id.login);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         Bundle extras = getIntent().getExtras();
@@ -36,7 +42,8 @@ public class MainActivity extends AppCompatActivity
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        //menuItem.setChecked(true);
+                        menuItem.setChecked(true);
+                        mDrawerLayout.closeDrawers();
                         switch (menuItem.getItemId()) {
                             case R.id.country_info_item:
                                 replaceTransaction(new CountryInfoFragment());
@@ -53,7 +60,6 @@ public class MainActivity extends AppCompatActivity
                             default:
                                 return false;
                         }
-                        mDrawerLayout.closeDrawers();
                         return true;
                     }
                 });
