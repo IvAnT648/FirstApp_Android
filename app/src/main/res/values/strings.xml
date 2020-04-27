@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Путеводитель</string>
+    <string name="password">123</string>
+    <string name="enter_button_text">Войти</string>
+    <string name="password_text">Пароль</string>
+    <string name="login_text">Логин</string>
+    <string name="welcome_text">Hello, </string>
+    <string name="title_activity_country">CountryActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="country_name_string">Россия</string>
+    <string name="country_square_string">17 125 191 км²</string>
+    <string name="about_title_string">Об авторе</string>
+    <string name="version">Версия 3.0.0</string>
+    <string name="author_name">Антюхин И.Г.</string>
+    <string name="country_info_menu_item_string">Информация о стране</string>
+    <string name="saved_countries_menu_item_string">Сохранённые страны</string>
+    <string name="choose_country_menu_item_string">Выбрать страну</string>
+    <string name="about_menu_item_string">Об авторе</string>
+</resources>
