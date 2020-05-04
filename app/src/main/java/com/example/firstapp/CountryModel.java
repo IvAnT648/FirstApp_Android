@@ -1,10 +1,33 @@
 package com.example.firstapp;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class CountryModel
 {
+    private static int objectCounter = 0;
+    private int countryId;
+
+    @SerializedName("Name")
+    @Expose
     private String name;
+
+    @SerializedName("square")
+    @Expose
+    private int square;
+
+    @SerializedName("Capital")
+    @Expose
+    private String capital;
+
     private int imageId;
+
     private String currency;
+
+    public CountryModel()
+    {
+        this.countryId = ++objectCounter;
+    }
 
     /**
      * Constructor
@@ -79,5 +102,30 @@ public class CountryModel
     public void setCurrency(String currency)
     {
         this.currency = currency;
+    }
+
+    public int getSquare()
+    {
+        return square;
+    }
+
+    public void setSquare(int square)
+    {
+        this.square = square;
+    }
+
+    public String getCapital()
+    {
+        return capital;
+    }
+
+    public void setCapital(String capital)
+    {
+        this.capital = capital;
+    }
+
+    public int getCountryId()
+    {
+        return countryId;
     }
 }
