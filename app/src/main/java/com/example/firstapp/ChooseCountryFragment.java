@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,14 +22,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class ChooseCountryFragment extends Fragment
 {
     private ArrayList<CountryModel> countries = new ArrayList<CountryModel>();
-    private String logTag = "=== JSON parsing";
+    private ChooseCountryRVAdapter adapter;
 
-    class AsyncTask_LoadJson extends AsyncTask<Void, Void, String>
+    class AsyncLoad_Countries extends AsyncTask<String, Void, String>
     {
         private String urlString =
                 "https://raw.githubusercontent.com/Lpirskaya/JsonLab/master/GuideNew";
@@ -43,11 +44,11 @@ public class ChooseCountryFragment extends Fragment
         }
 
         @Override
-        protected String doInBackground(Void... params)
+        protected String doInBackground(String... params)
         {
             String response = null;
             try {
-                response = this.loadData();
+                response = this.loadData(this.urlString);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -67,11 +68,11 @@ public class ChooseCountryFragment extends Fragment
          *
          * @return URL
          */
-        private URL getTargetUrl()
+        private URL getTargetUrl(String url)
         {
             URL targetUrl = null;
             try {
-                targetUrl = new URL(this.urlString);
+                targetUrl = new URL(url);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -83,11 +84,11 @@ public class ChooseCountryFragment extends Fragment
          *
          * @return String
          */
-        private String loadData()
+        private String loadData(String url)
         {
             HttpURLConnection connection = null;
             try {
-                connection = (HttpURLConnection) this.getTargetUrl().openConnection();
+                connection = (HttpURLConnection) this.getTargetUrl(url).openConnection();
                 if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     return null;
                 }
@@ -136,31 +137,21 @@ public class ChooseCountryFragment extends Fragment
     ) {
         View view = inflater.inflate(R.layout.fragment_choose_country, container, false);
 
+        this.loadCountries();
         this.initRecycleView(view);
 
-        String response = null;
-        try {
-            AsyncTask_LoadJson at = new AsyncTask_LoadJson();
-            response = at.execute().get();
-            Gson gson = new Gson();
-            List<CountryModel> countriesFromJson = gson.fromJson(
-                    response,
-                    new TypeToken<List<CountryModel>>() {}.getType()
-            );
-
-            assert countriesFromJson != null;
-            for (CountryModel country : countriesFromJson) {
-                Log.i(this.logTag, "===========================================");
-                Log.i(this.logTag, "Country ID: " + country.getCountryId());
-                Log.i(this.logTag, "Name: " + country.getName());
-                Log.i(this.logTag, "Capital: " + country.getCapital());
-                Log.i(this.logTag, "Square: " + country.getSquare());
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.srlCountriesList);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                loadCountries();
+                adapter.countries = countries;
+                Collections.shuffle(adapter.countries);
+                adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
             }
-            Log.i(this.logTag, "===========================================");
-            Log.i(this.logTag, "===========================================");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
 
         return view;
     }
@@ -169,6 +160,7 @@ public class ChooseCountryFragment extends Fragment
      * Init recycle view
      *
      * @param view View
+     * @return void
      */
     private void initRecycleView(View view)
     {
@@ -176,20 +168,32 @@ public class ChooseCountryFragment extends Fragment
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new ChooseCountryRVAdapter(this.extractCountries());
+        this.adapter = new ChooseCountryRVAdapter(this.countries);
         recyclerView.setAdapter(adapter);
     }
 
     /**
-     * Extract countries from string-array resource
+     * Load countries
      *
-     * @return ArrayList<CountryModel>
+     * @return void
      */
-    private ArrayList<CountryModel> extractCountries()
+    private void loadCountries()
     {
-        for (String name : getResources().getStringArray(R.array.countries_list)) {
-            countries.add(new CountryModel(name));
+        CountryModel.resetCounter();
+        try {
+            AsyncLoad_Countries at = new AsyncLoad_Countries();
+            String response = at.execute().get();
+            Gson gson = new Gson();
+            this.countries = gson.fromJson(
+                    response,
+                    new TypeToken<ArrayList<CountryModel>>() {}.getType()
+            );
+
+            if (this.countries == null) {
+                Log.i("=== Country loading", "Country not loaded");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return countries;
     }
 }

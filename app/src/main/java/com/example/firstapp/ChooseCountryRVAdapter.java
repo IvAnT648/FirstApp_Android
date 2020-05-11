@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class ChooseCountryRVAdapter
         extends RecyclerView.Adapter <ChooseCountryRVAdapter.SelectViewHolder>
 {
-    private ArrayList<CountryModel> countries;
+    public ArrayList<CountryModel> countries;
 
     public static class SelectViewHolder extends RecyclerView.ViewHolder
     {
@@ -42,19 +42,19 @@ public class ChooseCountryRVAdapter
     public ChooseCountryRVAdapter.SelectViewHolder onCreateViewHolder(
             ViewGroup parent,
             int viewType
-    )
-    {
+    ) {
         View view = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.choose_country_rv_item, parent, false);
-        view.setMinimumHeight(163);
+        view.setMinimumHeight(200);
         return new SelectViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(SelectViewHolder holder, int position)
     {
-        holder.mTextView.setText(countries.get(position).getName());
+        final String countryName = countries.get(position).getName();
+        holder.mTextView.setText(countryName);
 
         int countryNameLength = countries.get(position).getName().length();
         if (countryNameLength < 6) {

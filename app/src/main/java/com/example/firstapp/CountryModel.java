@@ -128,4 +128,9 @@ public class CountryModel
     {
         return countryId;
     }
+
+    public static void resetCounter()
+    {
+        objectCounter = 0;
+    }
 }

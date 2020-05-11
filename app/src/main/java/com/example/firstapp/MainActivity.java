@@ -11,12 +11,10 @@ import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity
 {
-    private DrawerLayout mDrawerLayout;
+    private DrawerLayout drawerLayout;
+    private Fragment currentFragment;
     private TextView login;
 
     @Override
@@ -25,11 +23,12 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            replaceTransaction(new ChooseCountryFragment());
+            this.currentFragment = new ChooseCountryFragment();
+            replaceFragment(this.currentFragment);
         }
 
         login = findViewById(R.id.login);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -38,35 +37,46 @@ public class MainActivity extends AppCompatActivity
             TextView text = head.findViewById(R.id.loginHead);
             text.setText(userName);
         }
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        mDrawerLayout.closeDrawers();
-                        switch (menuItem.getItemId()) {
-                            case R.id.country_info_item:
-                                replaceTransaction(new CountryInfoFragment());
-                                break;
-                            case R.id.saved_countries_item:
-                                replaceTransaction(new SavedCountriesFragment());
-                                break;
-                            case R.id.choose_country_item:
-                                replaceTransaction(new ChooseCountryFragment());
-                                break;
-                            case R.id.about_item:
-                                replaceTransaction(new AboutFragment());
-                                break;
-                            default:
-                                return false;
-                        }
-                        return true;
-                    }
-                });
 
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem)
+                {
+                    menuItem.setChecked(true);
+                    drawerLayout.closeDrawers();
+                    switch (menuItem.getItemId()) {
+                        case R.id.country_info_item:
+                            currentFragment = new CountryInfoFragment();
+                            replaceFragment(currentFragment);
+                            break;
+                        case R.id.saved_countries_item:
+                            currentFragment = new SavedCountriesFragment();
+                            replaceFragment(currentFragment);
+                            break;
+                        case R.id.choose_country_item:
+                            currentFragment = new ChooseCountryFragment();
+                            replaceFragment(currentFragment);
+                            break;
+                        case R.id.about_item:
+                            currentFragment = new AboutFragment();
+                            replaceFragment(currentFragment);
+                            break;
+                        default:
+                            return false;
+                    }
+                    return true;
+                }
+            }
+        );
     }
 
-    private void replaceTransaction(Fragment newFragment)
+    /**
+     * Replace fragment
+     *
+     * @param newFragment Fragment
+     */
+    private void replaceFragment(Fragment newFragment)
     {
         getSupportFragmentManager()
                 .beginTransaction()
