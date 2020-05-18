@@ -1,5 +1,7 @@
 package com.example.firstapp;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -28,6 +30,7 @@ public class ChooseCountryFragment extends Fragment
 {
     private ArrayList<CountryModel> countries = new ArrayList<CountryModel>();
     private ChooseCountryRVAdapter adapter;
+    private DBHelper dbHelper;
 
     class AsyncLoad_Countries extends AsyncTask<String, Void, String>
     {
@@ -136,8 +139,9 @@ public class ChooseCountryFragment extends Fragment
             Bundle savedInstanceState
     ) {
         View view = inflater.inflate(R.layout.fragment_choose_country, container, false);
+        this.dbHelper = new DBHelper(getContext(), "bd", null, 1);
 
-        this.loadCountries();
+        this.loadCountries(true);
         this.initRecycleView(view);
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.srlCountriesList);
@@ -145,7 +149,7 @@ public class ChooseCountryFragment extends Fragment
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                loadCountries();
+                loadCountries(true);
                 adapter.countries = countries;
                 Collections.shuffle(adapter.countries);
                 adapter.notifyDataSetChanged();
@@ -177,23 +181,39 @@ public class ChooseCountryFragment extends Fragment
      *
      * @return void
      */
-    private void loadCountries()
+    private void loadCountries(boolean updateIsNeeded)
     {
-        CountryModel.resetCounter();
-        try {
-            AsyncLoad_Countries at = new AsyncLoad_Countries();
-            String response = at.execute().get();
-            Gson gson = new Gson();
-            this.countries = gson.fromJson(
-                    response,
-                    new TypeToken<ArrayList<CountryModel>>() {}.getType()
-            );
+        if (updateIsNeeded) {
+            try {
+                AsyncLoad_Countries at = new AsyncLoad_Countries();
+                String response = at.execute().get();
+                Gson gson = new Gson();
+                this.countries = gson.fromJson(
+                        response,
+                        new TypeToken<ArrayList<CountryModel>>() {}.getType()
+                );
 
-            if (this.countries == null) {
-                Log.i("=== Country loading", "Country not loaded");
+                if (this.countries == null) {
+                    Log.i("=== Country loading", "Country not loaded");
+                    return;
+                }
+
+                for (CountryModel country : this.countries) {
+                    this.dbHelper.saveCountry(country.getDataToSave());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        this.countries = this.loadCountriesFromDB();
+    }
+
+    private ArrayList<CountryModel> loadCountriesFromDB()
+    {
+        ArrayList<CountryModel> result = new ArrayList<>();
+        for (ContentValues cv : this.dbHelper.selectCountries()) {
+            result.add(new CountryModel(cv));
+        }
+        return result;
     }
 }

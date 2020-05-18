@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,8 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private Fragment currentFragment;
     private TextView login;
+    private DBHelper dbHelper;
+    private Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,8 @@ public class MainActivity extends AppCompatActivity
             this.currentFragment = new ChooseCountryFragment();
             replaceFragment(this.currentFragment);
         }
+
+        this.dbHelper = new DBHelper(this, "bd", null, 1);
 
         login = findViewById(R.id.login);
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -83,5 +88,12 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.mainActivityFrame, newFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        cursor.close();
     }
 }

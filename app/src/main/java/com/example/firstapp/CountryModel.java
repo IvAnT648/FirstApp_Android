@@ -1,11 +1,12 @@
 package com.example.firstapp;
 
+import android.content.ContentValues;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class CountryModel
 {
-    private static int objectCounter = 0;
     private int countryId;
 
     @SerializedName("Name")
@@ -24,9 +25,14 @@ public class CountryModel
 
     private String currency;
 
-    public CountryModel()
+    public CountryModel() { }
+
+    public CountryModel(ContentValues data)
     {
-        this.countryId = ++objectCounter;
+        this.countryId = data.getAsInteger("id");
+        this.name = data.getAsString("name");
+        this.square = data.getAsInteger("square");
+        this.capital = data.getAsString("capital");
     }
 
     /**
@@ -129,8 +135,12 @@ public class CountryModel
         return countryId;
     }
 
-    public static void resetCounter()
+    public ContentValues getDataToSave()
     {
-        objectCounter = 0;
+        ContentValues cvData = new ContentValues();
+        cvData.put("name", this.getName());
+        cvData.put("square", this.getSquare());
+        cvData.put("capital", this.getCapital());
+        return cvData;
     }
 }

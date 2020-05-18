@@ -2,6 +2,7 @@ package com.example.firstapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -67,9 +68,9 @@ public class DBHelper extends SQLiteOpenHelper
         db.execSQL("CREATE TABLE countries (" +
                 "country_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT," +
-                "square TEXT," +
+                "square INTEGER," +
                 "capital TEXT," +
-                "image_id TEXT," +
+                "image_id INTEGER," +
                 "currency TEXT);"
         );
     }
@@ -108,9 +109,43 @@ public class DBHelper extends SQLiteOpenHelper
         long andreyUserId = db.insert("users", null, cv);
     }
 
-    public boolean insertRandSavedCountries(SQLiteDatabase db)
+    public long saveCountry(ContentValues data)
     {
-        return false;
+        if (data.getAsInteger("id") == null) {
+            return this.getWritableDatabase().insert("countries", null, data);
+        }
+        return this.getWritableDatabase().update(
+                "countries",
+                data,
+                "country_id = ?",
+                new String [] { String.valueOf(data.getAsInteger("id")) }
+        );
+    }
+
+    public ArrayList<ContentValues> selectCountries()
+    {
+        ArrayList<ContentValues> result = new ArrayList<>();
+        Cursor cursor = this.getReadableDatabase().query("countries",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        if (cursor.moveToFirst()) {
+            do {
+                ContentValues cv = new ContentValues();
+                cv.put("id", cursor.getInt(cursor.getColumnIndex("country_id")));
+                cv.put("name", cursor.getString(cursor.getColumnIndex("name")));
+                cv.put("square", cursor.getString(cursor.getColumnIndex("square")));
+                cv.put("capital", cursor.getString(cursor.getColumnIndex("capital")));
+                result.add(cv);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
     }
 
     @Override
