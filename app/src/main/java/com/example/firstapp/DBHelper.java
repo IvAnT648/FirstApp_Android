@@ -48,6 +48,21 @@ public class DBHelper extends SQLiteOpenHelper
         this.insertPrimaryData(db);
     }
 
+    /**
+     * On upgrade
+     *
+     * @param db SQLiteDatabase
+     * @param oldVersion int
+     * @param newVersion int
+     */
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
+
+    /**
+     * Create users table
+     *
+     * @param db SQLiteDatabase
+     */
     private void createUsersTable(SQLiteDatabase db)
     {
         db.execSQL("DROP TABLE IF EXISTS users;");
@@ -62,6 +77,11 @@ public class DBHelper extends SQLiteOpenHelper
         this.adminUserId = db.insert("users", null, cv);
     }
 
+    /**
+     * Create countries table
+     *
+     * @param db SQLiteDatabase
+     */
     private void createCountriesTable(SQLiteDatabase db)
     {
         db.execSQL("DROP TABLE IF EXISTS countries;");
@@ -75,6 +95,11 @@ public class DBHelper extends SQLiteOpenHelper
         );
     }
 
+    /**
+     * Create saved countries table
+     *
+     * @param db SQLiteDatabase
+     */
     private void createSavedCountriesTable(SQLiteDatabase db)
     {
         db.execSQL("DROP TABLE IF EXISTS saved_countries;");
@@ -85,6 +110,11 @@ public class DBHelper extends SQLiteOpenHelper
         );
     }
 
+    /**
+     * Insert initial data
+     *
+     * @param db SQLiteDatabase
+     */
     private void insertPrimaryData(SQLiteDatabase db)
     {
         // insert into users
@@ -109,6 +139,12 @@ public class DBHelper extends SQLiteOpenHelper
         long andreyUserId = db.insert("users", null, cv);
     }
 
+    /**
+     * Save country info
+     *
+     * @param data ContentValues
+     * @return long
+     */
     public long saveCountry(ContentValues data)
     {
         if (data.getAsInteger("id") == null) {
@@ -146,11 +182,5 @@ public class DBHelper extends SQLiteOpenHelper
         }
         cursor.close();
         return result;
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
-
     }
 }
