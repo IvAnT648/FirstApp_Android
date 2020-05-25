@@ -15,7 +15,7 @@ public class CountryModel
 
     @SerializedName("square")
     @Expose
-    private int square;
+    private String square;
 
     @SerializedName("Capital")
     @Expose
@@ -31,7 +31,7 @@ public class CountryModel
     {
         this.countryId = data.getAsInteger("id");
         this.name = data.getAsString("name");
-        this.square = data.getAsInteger("square");
+        this.square = data.getAsString("square");
         this.capital = data.getAsString("capital");
     }
 
@@ -110,12 +110,12 @@ public class CountryModel
         this.currency = currency;
     }
 
-    public int getSquare()
+    public String getSquare()
     {
         return square;
     }
 
-    public void setSquare(int square)
+    public void setSquare(String square)
     {
         this.square = square;
     }
@@ -130,7 +130,7 @@ public class CountryModel
         this.capital = capital;
     }
 
-    public int getCountryId()
+    public int getId()
     {
         return countryId;
     }

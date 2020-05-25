@@ -1,7 +1,6 @@
 package com.example.firstapp;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -26,11 +25,24 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ChooseCountryFragment extends Fragment
+public class ChooseCountryFragment extends Fragment implements CustomItemClickListener
 {
     private ArrayList<CountryModel> countries = new ArrayList<CountryModel>();
     private ChooseCountryRVAdapter adapter;
     private DBHelper dbHelper;
+
+    @Override
+    public void onItemClick(CountryModel country) { }
+
+    @Override
+    public void onLongItemClick(CountryModel country)
+    {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.replaceFragment(new CountryInfoFragment(country));
+    }
 
     class AsyncLoad_Countries extends AsyncTask<String, Void, String>
     {
@@ -172,7 +184,7 @@ public class ChooseCountryFragment extends Fragment
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        this.adapter = new ChooseCountryRVAdapter(this.countries);
+        this.adapter = new ChooseCountryRVAdapter(getContext(), this.countries, this);
         recyclerView.setAdapter(adapter);
     }
 

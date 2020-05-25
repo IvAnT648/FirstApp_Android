@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class SavedCountriesFragment extends Fragment
+public class SavedCountriesFragment extends Fragment implements CustomItemClickListener
 {
     private ArrayList<CountryModel> savedCountries = new ArrayList<CountryModel>();
 
@@ -30,7 +30,11 @@ public class SavedCountriesFragment extends Fragment
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new ChooseCountryRVAdapter(this.extractCountries());
+        RecyclerView.Adapter adapter = new SavedCountriesRVAdapter(
+                getContext(),
+                this.extractCountries(),
+                this
+        );
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -38,9 +42,21 @@ public class SavedCountriesFragment extends Fragment
 
     private ArrayList<CountryModel> extractCountries()
     {
-        for(String name : getResources().getStringArray(R.array.saved_countries_list)) {
+        for (String name : getResources().getStringArray(R.array.saved_countries_list)) {
             savedCountries.add(new CountryModel(name));
         }
         return savedCountries;
+    }
+
+    @Override
+    public void onItemClick(CountryModel country)
+    {
+
+    }
+
+    @Override
+    public void onLongItemClick(CountryModel country)
+    {
+
     }
 }

@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity
     private TextView login;
     private DBHelper dbHelper;
     private Cursor cursor;
+    public static int userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity
      *
      * @param newFragment Fragment
      */
-    private void replaceFragment(Fragment newFragment)
+    public void replaceFragment(Fragment newFragment)
     {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -94,6 +95,8 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-        cursor.close();
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
     }
 }

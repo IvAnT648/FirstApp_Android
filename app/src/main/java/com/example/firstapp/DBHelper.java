@@ -183,4 +183,50 @@ public class DBHelper extends SQLiteOpenHelper
         cursor.close();
         return result;
     }
+
+    public ContentValues loadCountryById(int countryId)
+    {
+        ContentValues cv = new ContentValues();
+        Cursor cursor = this.getReadableDatabase().query("countries",
+                null,
+                "country_id = ?",
+                new String[] { String.valueOf(countryId) },
+                null,
+                null,
+                null,
+                null
+        );
+        if (cursor.moveToFirst()) {
+            cv.put("id", cursor.getInt(cursor.getColumnIndex("country_id")));
+            cv.put("name", cursor.getString(cursor.getColumnIndex("name")));
+            cv.put("square", cursor.getString(cursor.getColumnIndex("square")));
+            cv.put("capital", cursor.getString(cursor.getColumnIndex("capital")));
+        }
+        cursor.close();
+        return cv;
+    }
+
+    public long saveUserCountry(int userId, int countryId)
+    {
+        Cursor cursor = this.getReadableDatabase().query("saved_countries",
+                null,
+                "user_id = ? AND country_id = ?",
+                new String[] { String.valueOf(userId), String.valueOf(countryId) },
+                null,
+                null,
+                null,
+                null
+        );
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return 0;
+        }
+        cursor.close();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("user_id", userId);
+        cv.put("country_id", countryId);
+        return db.insert("users", null, cv);
+    }
 }

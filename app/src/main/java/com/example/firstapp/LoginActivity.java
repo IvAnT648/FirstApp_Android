@@ -35,7 +35,8 @@ public class LoginActivity extends AppCompatActivity
             public void onClick(View view) {
                 String loginText = login.getText().toString();
                 String passText = pass.getText().toString();
-                if (!auth(loginText, passText)) {
+                MainActivity.userID = auth(loginText, passText);
+                if (MainActivity.userID == 0) {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "Неверный логин или пароль!", Toast.LENGTH_SHORT);
                     toast.show();
@@ -49,25 +50,31 @@ public class LoginActivity extends AppCompatActivity
         });
     }
 
-    private boolean auth(String login, String password)
+    private int auth(String login, String password)
     {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         cursor = db.query(
                 "users",
-                null,
+                new String[] { "user_id" },
                 "login = ? AND password = ?",
                 new String[] { login, password },
                 null,
                 null,
                 null
         );
-        return cursor.getCount() != 0;
+        if (!cursor.moveToFirst()) {
+            return 0;
+        }
+
+        return cursor.getInt(cursor.getColumnIndex("user_id"));
     }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
-        cursor.close();
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
     }
 }

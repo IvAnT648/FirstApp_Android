@@ -1,11 +1,15 @@
 package com.example.firstapp;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,27 +19,19 @@ public class ChooseCountryRVAdapter
         extends RecyclerView.Adapter <ChooseCountryRVAdapter.SelectViewHolder>
 {
     public ArrayList<CountryModel> countries;
+    public Context ctx;
+    public AlertDialog.Builder alertDialogBuilder;
+    public CustomItemClickListener listener;
+    public CountryModel selectedCountry;
+    private DBHelper dbHelper;
 
-    public static class SelectViewHolder extends RecyclerView.ViewHolder
+    public ChooseCountryRVAdapter(Context context, ArrayList<CountryModel> countries, CustomItemClickListener listener)
     {
-        public TextView mTextView;
-
-        public SelectViewHolder(View v)
-        {
-            super(v);
-            mTextView = v.findViewById(R.id.rv_item_country_name);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.i("Click", "on item click");
-                }
-            });
-        }
-    }
-
-    public ChooseCountryRVAdapter(ArrayList<CountryModel> countries)
-    {
+        this.ctx = context;
+        this.listener = listener;
         this.countries = countries;
+        this._createAlertDialogBuilder();
+        dbHelper = new DBHelper(ctx, "bd", null, 1);
     }
 
     @Override
@@ -50,11 +46,55 @@ public class ChooseCountryRVAdapter
         return new SelectViewHolder(view);
     }
 
+    private void _createAlertDialogBuilder()
+    {
+        this.alertDialogBuilder = new AlertDialog.Builder(this.ctx)
+                .setCancelable(true)
+                .setNegativeButton(R.string.cad_cancelButtonText,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("== AlertDialog", "on cancel button click");
+                            }
+                        }
+                )
+                .setPositiveButton(R.string.cad_saveButtonText,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("== AlertDialog", "on save button click");
+                                String messageText;
+                                if (dbHelper.saveUserCountry(MainActivity.userID, selectedCountry.getId()) == 0) {
+                                    messageText = "Страна уже сохранена";
+                                } else {
+                                    messageText = "Страна успешно сохранена";
+                                }
+                                Toast.makeText(
+                                        ctx,
+                                        messageText,
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        }
+                )
+                .setNeutralButton(R.string.cad_infoButtonText,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("== AlertDialog", "on info button click");
+                                if (selectedCountry != null) {
+                                    listener.onLongItemClick(selectedCountry);
+                                }
+                            }
+                        }
+                );
+    }
+
     @Override
     public void onBindViewHolder(SelectViewHolder holder, int position)
     {
-        final String countryName = countries.get(position).getName();
-        holder.mTextView.setText(countryName);
+        holder.country = countries.get(position);
+        holder.mTextView.setText(holder.country.getName());
 
         int countryNameLength = countries.get(position).getName().length();
         if (countryNameLength < 6) {
@@ -70,5 +110,37 @@ public class ChooseCountryRVAdapter
     public int getItemCount()
     {
         return countries.size();
+    }
+
+    /**
+     * Select View Holder inner class
+     */
+    public class SelectViewHolder extends RecyclerView.ViewHolder
+    {
+        public TextView mTextView;
+        public CountryModel country;
+
+        public SelectViewHolder(View v)
+        {
+            super(v);
+            mTextView = v.findViewById(R.id.rv_item_country_name);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.i("== Click", "on item click");
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Log.i("== Click", "on long item click");
+                    selectedCountry = country;
+                    alertDialogBuilder.setTitle(mTextView.getText());
+                    AlertDialog dialog = alertDialogBuilder.create();
+                    dialog.show();
+                    return true;
+                }
+            });
+        }
     }
 }

@@ -15,6 +15,10 @@
     <string name="saved_countries_menu_item_string">Сохранённые страны</string>
     <string name="choose_country_menu_item_string">Выбрать страну</string>
     <string name="about_menu_item_string">Об авторе</string>
+    <string name="cad_cancelButtonText">Отмена</string>
+    <string name="cad_saveButtonText">Сохранить</string>
+    <string name="cad_infoButtonText">Информация о стране</string>
+    <string name="cad_delButtonText">Удалить</string>
 
     <string-array name="countries_list">
         <item>Австралия</item>
