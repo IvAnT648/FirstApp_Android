@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class SavedCountriesFragment extends Fragment implements CustomItemClickListener
+public class SavedCountriesFragment extends Fragment
 {
     private ArrayList<CountryModel> savedCountries = new ArrayList<CountryModel>();
+    private SavedCountriesRVAdapter adapter;
+    private DBHelper dbHelper;
 
     public SavedCountriesFragment() { }
 
@@ -25,19 +27,25 @@ public class SavedCountriesFragment extends Fragment implements CustomItemClickL
             Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_saved_countries, container, false);
+        this.dbHelper = new DBHelper(getContext(), "bd", null, 1);
 
         RecyclerView recyclerView = view.findViewById(R.id.rwSavedCountriesList);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new SavedCountriesRVAdapter(
+        adapter = new SavedCountriesRVAdapter(
                 getContext(),
-                this.extractCountries(),
+                this.loadUserCountries(),
                 this
         );
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    private ArrayList<CountryModel> loadUserCountries()
+    {
+        return this.dbHelper.loadUsersCountry(MainActivity.userID);
     }
 
     private ArrayList<CountryModel> extractCountries()
@@ -48,15 +56,22 @@ public class SavedCountriesFragment extends Fragment implements CustomItemClickL
         return savedCountries;
     }
 
-    @Override
-    public void onItemClick(CountryModel country)
+    public boolean deleteCountry(CountryModel country)
     {
-
+        if (country == null) {
+            return false;
+        }
+        if (dbHelper.deleteSavedCountry(MainActivity.userID, country.getId()) != 0) {
+            this.updateList();
+            return true;
+        }
+        return false;
     }
 
-    @Override
-    public void onLongItemClick(CountryModel country)
+    public void updateList()
     {
-
+        ArrayList<CountryModel> countries = this.loadUserCountries();
+        this.adapter.setSavedCountries(countries);
+        this.adapter.notifyDataSetChanged();
     }
 }

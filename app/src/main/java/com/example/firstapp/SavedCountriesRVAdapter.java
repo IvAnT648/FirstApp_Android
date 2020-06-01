@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,12 +18,12 @@ public class SavedCountriesRVAdapter
         extends RecyclerView.Adapter<SavedCountriesRVAdapter.SavedViewHolder>
 {
     private ArrayList<CountryModel> savedCountries;
-    public CustomItemClickListener listener;
+    public SavedCountriesFragment listener;
     public AlertDialog.Builder alertDialogBuilder;
     public CountryModel targetCountry;
     public Context ctx;
 
-    public SavedCountriesRVAdapter(Context context, ArrayList<CountryModel> savedCountries, CustomItemClickListener listener)
+    public SavedCountriesRVAdapter(Context context, ArrayList<CountryModel> savedCountries, SavedCountriesFragment listener)
     {
         this.ctx = context;
         this.listener = listener;
@@ -47,6 +48,17 @@ public class SavedCountriesRVAdapter
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.i("== AlertDialog", "on delete button click");
+                                String message;
+                                if (listener.deleteCountry(targetCountry)) {
+                                    message = "Страна " + targetCountry.getName() + " успешно удалена";
+                                } else {
+                                    message = "Не удалось удалить страну";
+                                }
+                                Toast.makeText(
+                                        ctx,
+                                        message,
+                                        Toast.LENGTH_LONG
+                                ).show();
                             }
                         }
                 );
@@ -65,6 +77,7 @@ public class SavedCountriesRVAdapter
     public void onBindViewHolder(SavedCountriesRVAdapter.SavedViewHolder holder, int position)
     {
         holder.mTextView.setText(savedCountries.get(position).getName());
+        holder.country = savedCountries.get(position);
     }
 
     @Override
@@ -86,6 +99,7 @@ public class SavedCountriesRVAdapter
                 @Override
                 public void onClick(View view) {
                     Log.i("Click", "on item click");
+                    targetCountry = country;
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -100,5 +114,10 @@ public class SavedCountriesRVAdapter
                 }
             });
         }
+    }
+
+    public void setSavedCountries(ArrayList<CountryModel> newList)
+    {
+        this.savedCountries = newList;
     }
 }

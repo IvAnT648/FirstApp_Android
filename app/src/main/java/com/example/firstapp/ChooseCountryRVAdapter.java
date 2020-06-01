@@ -128,6 +128,8 @@ public class ChooseCountryRVAdapter
                 @Override
                 public void onClick(View view) {
                     Log.i("== Click", "on item click");
+                    selectedCountry = country;
+                    listener.onItemClick(selectedCountry);
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {

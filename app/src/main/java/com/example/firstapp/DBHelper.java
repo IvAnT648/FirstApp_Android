@@ -217,7 +217,7 @@ public class DBHelper extends SQLiteOpenHelper
                 null,
                 null
         );
-        if (cursor.moveToFirst()) {
+        if (cursor.getCount() != 0) {
             cursor.close();
             return 0;
         }
@@ -227,6 +227,35 @@ public class DBHelper extends SQLiteOpenHelper
         ContentValues cv = new ContentValues();
         cv.put("user_id", userId);
         cv.put("country_id", countryId);
-        return db.insert("users", null, cv);
+        return db.insert("saved_countries", null, cv);
+    }
+
+    public ArrayList<CountryModel> loadUsersCountry(int userId)
+    {
+        ArrayList<CountryModel> result = new ArrayList<>();
+        Cursor cursor = this.getReadableDatabase().rawQuery(
+                "SELECT * FROM countries WHERE country_id IN (SELECT country_id FROM saved_countries WHERE user_id = ?)",
+                new String[] {String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                ContentValues cv = new ContentValues();
+                cv.put("id", cursor.getInt(cursor.getColumnIndex("country_id")));
+                cv.put("name", cursor.getString(cursor.getColumnIndex("name")));
+                cv.put("square", cursor.getString(cursor.getColumnIndex("square")));
+                cv.put("capital", cursor.getString(cursor.getColumnIndex("capital")));
+                result.add(new CountryModel(cv));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
+    public int deleteSavedCountry(int userId, int countryId)
+    {
+        return this.getWritableDatabase().delete(
+                "saved_countries",
+                "user_id = ? AND country_id = ?",
+                new String[] {String.valueOf(userId), String.valueOf(countryId)}
+        );
     }
 }

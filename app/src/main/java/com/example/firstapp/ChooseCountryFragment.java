@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -32,7 +34,31 @@ public class ChooseCountryFragment extends Fragment implements CustomItemClickLi
     private DBHelper dbHelper;
 
     @Override
-    public void onItemClick(CountryModel country) { }
+    public void onItemClick(final CountryModel country)
+    {
+        View view = this.getView();
+        if (view != null) {
+            Snackbar.make(view, "Сохранить страну " + country.getName() + "?", Snackbar.LENGTH_LONG)
+                    .setAction("Да", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            String message;
+                            if (dbHelper.saveUserCountry(MainActivity.userID, country.getId()) != 0) {
+                                message = "Страна " + country.getName() + " сохранена";
+                            } else {
+                                message = "Эта страна уже добавлена.";
+                            }
+                            Toast.makeText(
+                                    getContext(),
+                                    message,
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    })
+                    .show();
+        }
+    }
 
     @Override
     public void onLongItemClick(CountryModel country)
