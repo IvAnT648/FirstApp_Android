@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ public class ChooseCountryRVAdapter
     public CustomItemClickListener listener;
     public CountryModel selectedCountry;
     private DBHelper dbHelper;
+    private static int notifyCounter = 0;
+    private NotificationManagerCompat notifyManager;
 
     public ChooseCountryRVAdapter(Context context, ArrayList<CountryModel> countries, CustomItemClickListener listener)
     {
@@ -31,7 +35,7 @@ public class ChooseCountryRVAdapter
         this.listener = listener;
         this.countries = countries;
         this._createAlertDialogBuilder();
-        dbHelper = new DBHelper(ctx, "bd", null, 1);
+        this.dbHelper = new DBHelper(ctx, "bd", null, 1);
     }
 
     @Override
@@ -74,6 +78,24 @@ public class ChooseCountryRVAdapter
                                         messageText,
                                         Toast.LENGTH_SHORT
                                 ).show();
+                                this.createNotification(messageText);
+                            }
+
+                            private void createNotification(String message)
+                            {
+                                if (ctx == null && notifyManager != null) {
+                                    return;
+                                }
+
+                                NotificationCompat.Builder builder =
+                                        new NotificationCompat.Builder(ctx)
+                                                .setSmallIcon(R.drawable.icon)
+                                                .setContentTitle("Путеводитель")
+                                                .setContentText(message);
+
+                                NotificationManagerCompat
+                                        .from(ctx)
+                                        .notify(++notifyCounter, builder.build());
                             }
                         }
                 )

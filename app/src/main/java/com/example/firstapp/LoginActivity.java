@@ -3,6 +3,7 @@ package com.example.firstapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ public class LoginActivity extends AppCompatActivity
     Button button;
     DBHelper dbHelper;
     Cursor cursor;
+    final String SHARED_PREF_SAVED_LOGIN = "saved_login";
+    final String SHARED_PREF_SAVED_PASS = "saved_pass";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,6 +33,8 @@ public class LoginActivity extends AppCompatActivity
         this.pass = (EditText) findViewById(R.id.pass);
         this.button = (Button) findViewById(R.id.submit_auth);
 
+        loadSharedPreferences();
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -37,6 +42,7 @@ public class LoginActivity extends AppCompatActivity
                 String passText = pass.getText().toString();
                 MainActivity.userID = auth(loginText, passText);
                 if (MainActivity.userID == 0) {
+                    saveSharedPreferences("", "");
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "Неверный логин или пароль!", Toast.LENGTH_SHORT);
                     toast.show();
@@ -45,6 +51,8 @@ public class LoginActivity extends AppCompatActivity
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("login", loginText);
+                saveSharedPreferences(login.getText().toString(), pass.getText().toString());
+
                 startActivity(intent);
             }
         });
@@ -67,6 +75,30 @@ public class LoginActivity extends AppCompatActivity
         }
 
         return cursor.getInt(cursor.getColumnIndex("user_id"));
+    }
+
+    private void saveSharedPreferences(String login, String password)
+    {
+        if (this.login == null || this.pass == null) {
+            return;
+        }
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(SHARED_PREF_SAVED_LOGIN, login);
+        editor.putString(SHARED_PREF_SAVED_PASS, password);
+        editor.commit();
+    }
+
+    private void loadSharedPreferences()
+    {
+        if (this.login == null || this.pass == null) {
+            return;
+        }
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        String savedLogin = pref.getString(SHARED_PREF_SAVED_LOGIN, "");
+        String savedPass = pref.getString(SHARED_PREF_SAVED_PASS, "");
+        this.login.setText(savedLogin);
+        this.pass.setText(savedPass);
     }
 
     @Override
