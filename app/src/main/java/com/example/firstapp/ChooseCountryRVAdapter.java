@@ -1,9 +1,14 @@
 package com.example.firstapp;
 
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +32,6 @@ public class ChooseCountryRVAdapter
     public CountryModel selectedCountry;
     private DBHelper dbHelper;
     private static int notifyCounter = 0;
-    private NotificationManagerCompat notifyManager;
 
     public ChooseCountryRVAdapter(Context context, ArrayList<CountryModel> countries, CustomItemClickListener listener)
     {
@@ -83,19 +87,27 @@ public class ChooseCountryRVAdapter
 
                             private void createNotification(String message)
                             {
-                                if (ctx == null && notifyManager != null) {
+                                if (ctx == null) {
                                     return;
                                 }
 
-                                NotificationCompat.Builder builder =
-                                        new NotificationCompat.Builder(ctx)
-                                                .setSmallIcon(R.drawable.icon)
-                                                .setContentTitle("Путеводитель")
-                                                .setContentText(message);
+                                // Create an explicit intent for an Activity in your app
+                                Intent intent = new Intent(ctx, MainActivity.class);
+                                intent.putExtra("country_id", selectedCountry.getId());
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                PendingIntent pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0);
+
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, MainActivity.NOTIFICATION_CHANNEL_ID)
+                                        .setSmallIcon(R.drawable.icon)
+                                        .setContentTitle("Путеводитель")
+                                        .setContentText(message)
+                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                        .setContentIntent(pendingIntent)
+                                        .setAutoCancel(true);
 
                                 NotificationManagerCompat
-                                        .from(ctx)
-                                        .notify(++notifyCounter, builder.build());
+                                    .from(ctx)
+                                    .notify(++notifyCounter, builder.build());
                             }
                         }
                 )
