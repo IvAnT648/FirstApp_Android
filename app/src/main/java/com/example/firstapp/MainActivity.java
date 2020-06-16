@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
 
         login = findViewById(R.id.login);
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             int countryId = extras.getInt("country_id");
@@ -62,8 +62,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem)
             {
-                menuItem.setChecked(true);
+                for (int i = 0; i < navigationView.getMenu().size(); i++) {
+                    navigationView.getMenu().getItem(i).setChecked(false);
+                }
                 drawerLayout.closeDrawers();
+                menuItem.setChecked(true);
                 switch (menuItem.getItemId()) {
                     case R.id.country_info_item:
                         currentFragment = new CountryInfoFragment();

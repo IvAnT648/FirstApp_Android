@@ -70,6 +70,7 @@ public class SavedCountriesRVAdapter
         View view = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.saved_countries_rv_item, parent, false);
+        view.setMinimumHeight(200);
         return new SavedCountriesRVAdapter.SavedViewHolder(view);
     }
 

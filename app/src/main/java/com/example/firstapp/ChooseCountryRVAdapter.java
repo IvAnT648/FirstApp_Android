@@ -141,14 +141,14 @@ public class ChooseCountryRVAdapter
         holder.country = countries.get(position);
         holder.mTextView.setText(holder.country.getName());
 
-        int countryNameLength = countries.get(position).getName().length();
-        if (countryNameLength < 6) {
-            holder.mTextView.setTextColor(Color.RED);
-        } else if (countryNameLength > 7) {
-            holder.mTextView.setTextColor(Color.GREEN);
-        } else {
-            holder.mTextView.setTextColor(Color.BLUE);
-        }
+//        int countryNameLength = countries.get(position).getName().length();
+//        if (countryNameLength < 6) {
+//            holder.mTextView.setTextColor(Color.RED);
+//        } else if (countryNameLength > 7) {
+//            holder.mTextView.setTextColor(Color.GREEN);
+//        } else {
+//            holder.mTextView.setTextColor(Color.BLUE);
+//        }
     }
 
     @Override
