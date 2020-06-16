@@ -28,15 +28,15 @@ public class ChooseCountryRVAdapter
     public ArrayList<CountryModel> countries;
     public Context ctx;
     public AlertDialog.Builder alertDialogBuilder;
-    public CustomItemClickListener listener;
+    public ChooseCountryFragment fragmentListener;
     public CountryModel selectedCountry;
     private DBHelper dbHelper;
     private static int notifyCounter = 0;
 
-    public ChooseCountryRVAdapter(Context context, ArrayList<CountryModel> countries, CustomItemClickListener listener)
+    public ChooseCountryRVAdapter(Context context, ArrayList<CountryModel> countries, ChooseCountryFragment listener)
     {
         this.ctx = context;
-        this.listener = listener;
+        this.fragmentListener = listener;
         this.countries = countries;
         this._createAlertDialogBuilder();
         this.dbHelper = new DBHelper(ctx, "bd", null, 1);
@@ -117,7 +117,18 @@ public class ChooseCountryRVAdapter
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.i("== AlertDialog", "on info button click");
                                 if (selectedCountry != null) {
-                                    listener.onLongItemClick(selectedCountry);
+                                    fragmentListener.openCountryInfo(selectedCountry);
+                                }
+                            }
+                        }
+                )
+                .setNeutralButton(R.string.cad_searchButtonText,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("== AlertDialog", "on search button click");
+                                if (selectedCountry != null) {
+                                    fragmentListener.browseCountryInfo(selectedCountry.getName());
                                 }
                             }
                         }
@@ -163,7 +174,7 @@ public class ChooseCountryRVAdapter
                 public void onClick(View view) {
                     Log.i("== Click", "on item click");
                     selectedCountry = country;
-                    listener.onItemClick(selectedCountry);
+                    fragmentListener.onItemClick(selectedCountry);
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {

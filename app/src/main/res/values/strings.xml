@@ -19,6 +19,8 @@
     <string name="cad_saveButtonText">Сохранить</string>
     <string name="cad_infoButtonText">Информация о стране</string>
     <string name="cad_delButtonText">Удалить</string>
+    <string name="cad_searchButtonText">Поиск</string>
+    <string name="browser_chooser_title">ВЫберите браузер</string>
 
     <string-array name="countries_list">
         <item>Австралия</item>

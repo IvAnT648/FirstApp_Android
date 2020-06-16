@@ -1,6 +1,8 @@
 package com.example.firstapp;
 
 import android.content.ContentValues;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -27,13 +29,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ChooseCountryFragment extends Fragment implements CustomItemClickListener
+public class ChooseCountryFragment extends Fragment
 {
     private ArrayList<CountryModel> countries = new ArrayList<CountryModel>();
     private ChooseCountryRVAdapter adapter;
     private DBHelper dbHelper;
+    private String searchURL = "https://yandex.ru/search/?text=";
 
-    @Override
     public void onItemClick(final CountryModel country)
     {
         View view = this.getView();
@@ -60,14 +62,21 @@ public class ChooseCountryFragment extends Fragment implements CustomItemClickLi
         }
     }
 
-    @Override
-    public void onLongItemClick(CountryModel country)
+    public void openCountryInfo(CountryModel country)
     {
         MainActivity activity = (MainActivity) getActivity();
         if (activity == null) {
             return;
         }
         activity.replaceFragment(new CountryInfoFragment(country));
+    }
+
+    public void browseCountryInfo(String countryName)
+    {
+        String url = this.searchURL + countryName;
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 
     class AsyncLoad_Countries extends AsyncTask<String, Void, String>
